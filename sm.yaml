@@ -33,4 +33,6 @@
     - name: install sm
       become: True
       command: chdir=/home/ubuntu/sm_openstack python setup.py install
-      
+
+    - name: Create sm.cfg file
+      template: src=templates/sm.cfg.j2 dest=/home/ubuntu/sm_openstack/etc/sm.cfg
