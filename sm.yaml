@@ -1,0 +1,36 @@
+---
+- name: Install and configure SM
+  hosts: hurtle_service_manager_wp6
+#  become: True
+  tasks:
+    - name: Dist upgrade all packages
+      become: True
+      apt: upgrade=dist update_cache=yes
+
+    - name: install packages
+      become: True
+      apt: name={{item}} update_cache=yes
+      with_items:
+        - git
+        - python-pip
+        - python-dev
+        - python-flask
+
+    - name: install requests
+      become: True
+      pip: name=requests extra_args='--upgrade'
+
+    - name: Clone hurtle_cc_sdk
+      git: repo=https://github.com/icclab/hurtle_cc_sdk.git dest=/home/ubuntu/hurtle_cc_sdk force=yes
+
+    - name: install hurtle_cc_sdk
+      become: True
+      command: chdir=/home/ubuntu/hurtle_cc_sdk python setup.py install
+
+    - name: Clone sm_openstack branch hadoop_sm
+      git: repo=https://github.com/Pentadactylus/sm_openstack dest=/home/ubuntu/sm_openstack version=hadoop_sm force=yes
+
+    - name: install sm
+      become: True
+      command: chdir=/home/ubuntu/sm_openstack python setup.py install
+      
